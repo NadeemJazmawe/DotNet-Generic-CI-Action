@@ -17,39 +17,42 @@ runs:
       with:
         dotnet-version: ${{ inputs.dotnet-version }}
 
-    - name: Restore dependencies
+    - name: Restore dependencies - macOS
+      if: runner.os == 'macOS'
       run: |
-        if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-          find . -name "*.csproj" -type f -print0 | xargs -0 -n1 dotnet restore
-        elif [[ "$OSTYPE" == "darwin"* ]]; then
-          find . -name "*.csproj" -type f -print0 | xargs -0 -n1 dotnet restore
-        elif [[ "$OSTYPE" == "cygwin" ]]; then
-          find . -name "*.csproj" -type f -print0 | xargs -0 -n1 dotnet restore
-        elif [[ "$OSTYPE" == "msys" ]]; then
-          find . -name "*.csproj" -type f -print0 | xargs -0 -n1 dotnet restore
-        elif [[ "$OSTYPE" == "win32" ]]; then
-          Get-ChildItem -Recurse -Filter "*.csproj" | ForEach-Object { dotnet restore $_.FullName }
-        else
-          echo "Unsupported operating system: $OSTYPE"
-          exit 1
-        fi 
-      
-    - name: Build
+      find . -name "*.csproj" -type f -print0 | xargs -0 -n1 dotnet restore
+      shell: bash
+
+    - name: Restore dependencies - Ubuntu
+      if: runner.os == 'Linux'
       run: |
-        if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-          find . -name "*.csproj" -type f -print0 | xargs -0 -n1 dotnet build --no-restore --configuration Release
-        elif [[ "$OSTYPE" == "darwin"* ]]; then
-          find . -name "*.csproj" -type f -print0 | xargs -0 -n1 dotnet build --no-restore --configuration Release
-        elif [[ "$OSTYPE" == "cygwin" ]]; then
-          find . -name "*.csproj" -type f -print0 | xargs -0 -n1 dotnet build --no-restore --configuration Release
-        elif [[ "$OSTYPE" == "msys" ]]; then
-          find . -name "*.csproj" -type f -print0 | xargs -0 -n1 dotnet build --no-restore --configuration Release
-        elif [[ "$OSTYPE" == "win32" ]]; then
-          Get-ChildItem -Recurse -Filter "*.csproj" | ForEach-Object { dotnet build --no-restore --configuration Release $_.FullName }
-        else
-          echo "Unsupported operating system: $OSTYPE"
-          exit 1
-        fi
+      find . -name "*.csproj" -type f -print0 | xargs -0 -n1 dotnet restore
+      shell: bash
+
+    - name: Restore dependencies - Windows
+      if: runner.os == 'Windows'
+      run: |
+      Get-ChildItem -Recurse -Filter "*.csproj" | ForEach-Object { dotnet restore $_.FullName }
+      shell: powershell
+
+    - name: Build - macOS
+      if: runner.os == 'macOS'
+      run: |
+        find . -name "*.csproj" -type f -print0 | xargs -0 -n1 dotnet build --no-restore --configuration Release
+      shell: bash
+
+    - name: Build - Ubuntu
+      if: runner.os == 'Linux'
+      run: |
+        find . -name "*.csproj" -type f -print0 | xargs -0 -n1 dotnet build --no-restore --configuration Release
+      shell: bash
+
+    - name: Build - Windows
+      if: runner.os == 'Windows'
+      run: |
+        Get-ChildItem -Recurse -Filter "*.csproj" | ForEach-Object { dotnet build --no-restore --configuration Release $_.FullName }
+      shell: powershell
+
 
     - name: Run tests
       run: |
@@ -68,10 +71,10 @@ runs:
           exit 1
         fi
 
-        - name: Publish test results
-          uses: dorny/test-reporter@v1
-          with:
-            path-to-report: '**/*.trx'
-            format: 'trx'    - name: Publish test results
+    - name: Publish test results
+      uses: dorny/test-reporter@v1
+      with:
+        path-to-report: '**/*.trx'
+        format: 'trx'    - name: Publish test results
 
 
