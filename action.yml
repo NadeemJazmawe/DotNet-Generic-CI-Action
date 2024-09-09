@@ -1,6 +1,6 @@
 name: '.NET Core CI'
 description: 'A GitHub Action to run CI process for .NET repositories'
-author: 'Your Name'
+author: '@Nadeem Jazmawe'
 inputs:
   dotnet-version:
     description: 'The version of .NET Core to use'
@@ -19,20 +19,20 @@ runs:
 
     - name: Restore dependencies
       run: |
-      if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-        find . -name "*.csproj" -type f -print0 | xargs -0 -n1 dotnet restore
-      elif [[ "$OSTYPE" == "darwin"* ]]; then
-        find . -name "*.csproj" -type f -print0 | xargs -0 -n1 dotnet restore
-      elif [[ "$OSTYPE" == "cygwin" ]]; then
-        find . -name "*.csproj" -type f -print0 | xargs -0 -n1 dotnet restore
-      elif [[ "$OSTYPE" == "msys" ]]; then
-        find . -name "*.csproj" -type f -print0 | xargs -0 -n1 dotnet restore
-      elif [[ "$OSTYPE" == "win32" ]]; then
-        Get-ChildItem -Recurse -Filter "*.csproj" | ForEach-Object { dotnet restore $_.FullName }
-      else
-        echo "Unsupported operating system: $OSTYPE"
-        exit 1
-      fi 
+        if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+          find . -name "*.csproj" -type f -print0 | xargs -0 -n1 dotnet restore
+        elif [[ "$OSTYPE" == "darwin"* ]]; then
+          find . -name "*.csproj" -type f -print0 | xargs -0 -n1 dotnet restore
+        elif [[ "$OSTYPE" == "cygwin" ]]; then
+          find . -name "*.csproj" -type f -print0 | xargs -0 -n1 dotnet restore
+        elif [[ "$OSTYPE" == "msys" ]]; then
+          find . -name "*.csproj" -type f -print0 | xargs -0 -n1 dotnet restore
+        elif [[ "$OSTYPE" == "win32" ]]; then
+          Get-ChildItem -Recurse -Filter "*.csproj" | ForEach-Object { dotnet restore $_.FullName }
+        else
+          echo "Unsupported operating system: $OSTYPE"
+          exit 1
+        fi 
       
     - name: Build
       run: |
