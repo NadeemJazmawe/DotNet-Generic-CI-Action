@@ -75,14 +75,14 @@ jobs:
 
       - name: Run tests
         run: dotnet test --no-build --verbosity normal
-Contributing
+```
+
+## Contributing
 If you have suggestions for improvements or encounter issues, please feel free to open an issue or submit a pull request.
 
-License
+## License
 This project is licensed under the MIT License.
 
-css
-Copy code
 
 This `README.md` provides a clear and detailed overview of the GitHub Action, including its design, structure, and usage instructions. Adjust the content as needed to fit your specific implementation and requirements.
 
