@@ -58,27 +58,28 @@ runs:
       shell: powershell
 
 
-    # - name: Run tests
-    #   run: |
-    #     if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-    #       find . -name "*.csproj" -type f -print0 | xargs -0 -n1 dotnet test --no-build --verbosity normal --configuration Release --logger trx
-    #     elif [[ "$OSTYPE" == "darwin"* ]]; then
-    #       find . -name "*.csproj" -type f -print0 | xargs -0 -n1 dotnet test --no-build --verbosity normal --configuration Release --logger trx
-    #     elif [[ "$OSTYPE" == "cygwin" ]]; then
-    #       find . -name "*.csproj" -type f -print0 | xargs -0 -n1 dotnet test --no-build --verbosity normal --configuration Release --logger trx
-    #     elif [[ "$OSTYPE" == "msys" ]]; then
-    #       find . -name "*.csproj" -type f -print0 | xargs -0 -n1 dotnet test --no-build --verbosity normal --configuration Release --logger trx
-    #     elif [[ "$OSTYPE" == "win32" ]]; then
-    #       Get-ChildItem -Recurse -Filter "*.csproj" | ForEach-Object { dotnet test --no-build --verbosity normal --configuration Release --logger trx $_.FullName }
-    #     else
-    #       echo "Unsupported operating system: $OSTYPE"
-    #       exit 1
-    #     fi
+    - name: Run tests - macOS
+      if: runner.os == 'macOS'
+      run: |
+        find . -name "*.csproj" -type f -print0 | xargs -0 -n1 dotnet test --no-build --verbosity normal --configuration Release --logger trx
+      shell: bash
 
-    # - name: Publish test results
-    #   uses: dorny/test-reporter@v1
-    #   with:
-    #     path-to-report: '**/*.trx'
-    #     format: 'trx'    - name: Publish test results
+     - name: Run tests - Linux
+      if: runner.os == 'Linux'
+      run: |
+        find . -name "*.csproj" -type f -print0 | xargs -0 -n1 dotnet test --no-build --verbosity normal --configuration Release --logger trx
+      shell: bash
+
+     - name: Run tests - Windows
+      if: runner.os == 'Windows'
+      run: |
+        Get-ChildItem -Recurse -Filter "*.csproj" | ForEach-Object { dotnet test --no-build --verbosity normal --configuration Release --logger trx $_.FullName }
+      shell: powershell
+
+    - name: Publish test results
+      uses: dorny/test-reporter@v1
+      with:
+        path-to-report: '**/*.trx'
+        format: 'trx'    - name: Publish test results
 
 
