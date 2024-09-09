@@ -1,0 +1,77 @@
+name: '.NET Core CI'
+description: 'A GitHub Action to run CI process for .NET repositories'
+author: 'Your Name'
+inputs:
+  dotnet-version:
+    description: 'The version of .NET Core to use'
+    required: true
+    default: '6.0.x'
+runs:
+  using: 'composite'
+  steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: ${{ inputs.dotnet-version }}
+
+    - name: Restore dependencies
+      run: |
+      if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+        find . -name "*.csproj" -type f -print0 | xargs -0 -n1 dotnet restore
+      elif [[ "$OSTYPE" == "darwin"* ]]; then
+        find . -name "*.csproj" -type f -print0 | xargs -0 -n1 dotnet restore
+      elif [[ "$OSTYPE" == "cygwin" ]]; then
+        find . -name "*.csproj" -type f -print0 | xargs -0 -n1 dotnet restore
+      elif [[ "$OSTYPE" == "msys" ]]; then
+        find . -name "*.csproj" -type f -print0 | xargs -0 -n1 dotnet restore
+      elif [[ "$OSTYPE" == "win32" ]]; then
+        Get-ChildItem -Recurse -Filter "*.csproj" | ForEach-Object { dotnet restore $_.FullName }
+      else
+        echo "Unsupported operating system: $OSTYPE"
+        exit 1
+      fi 
+      
+    - name: Build
+      run: |
+        if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+          find . -name "*.csproj" -type f -print0 | xargs -0 -n1 dotnet build --no-restore --configuration Release
+        elif [[ "$OSTYPE" == "darwin"* ]]; then
+          find . -name "*.csproj" -type f -print0 | xargs -0 -n1 dotnet build --no-restore --configuration Release
+        elif [[ "$OSTYPE" == "cygwin" ]]; then
+          find . -name "*.csproj" -type f -print0 | xargs -0 -n1 dotnet build --no-restore --configuration Release
+        elif [[ "$OSTYPE" == "msys" ]]; then
+          find . -name "*.csproj" -type f -print0 | xargs -0 -n1 dotnet build --no-restore --configuration Release
+        elif [[ "$OSTYPE" == "win32" ]]; then
+          Get-ChildItem -Recurse -Filter "*.csproj" | ForEach-Object { dotnet build --no-restore --configuration Release $_.FullName }
+        else
+          echo "Unsupported operating system: $OSTYPE"
+          exit 1
+        fi
+
+    - name: Run tests
+      run: |
+        if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+          find . -name "*.csproj" -type f -print0 | xargs -0 -n1 dotnet test --no-build --verbosity normal --configuration Release --logger trx
+        elif [[ "$OSTYPE" == "darwin"* ]]; then
+          find . -name "*.csproj" -type f -print0 | xargs -0 -n1 dotnet test --no-build --verbosity normal --configuration Release --logger trx
+        elif [[ "$OSTYPE" == "cygwin" ]]; then
+          find . -name "*.csproj" -type f -print0 | xargs -0 -n1 dotnet test --no-build --verbosity normal --configuration Release --logger trx
+        elif [[ "$OSTYPE" == "msys" ]]; then
+          find . -name "*.csproj" -type f -print0 | xargs -0 -n1 dotnet test --no-build --verbosity normal --configuration Release --logger trx
+        elif [[ "$OSTYPE" == "win32" ]]; then
+          Get-ChildItem -Recurse -Filter "*.csproj" | ForEach-Object { dotnet test --no-build --verbosity normal --configuration Release --logger trx $_.FullName }
+        else
+          echo "Unsupported operating system: $OSTYPE"
+          exit 1
+        fi
+
+        - name: Publish test results
+          uses: dorny/test-reporter@v1
+          with:
+            path-to-report: '**/*.trx'
+            format: 'trx'    - name: Publish test results
+
+
