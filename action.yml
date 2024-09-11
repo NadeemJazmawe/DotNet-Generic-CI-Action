@@ -95,10 +95,10 @@ runs:
       shell: bash
 
     - name: Run tests - Windows
-       if: runner.os == 'Windows'
-       run: |
+      if: runner.os == 'Windows'
+      run: |
         Get-ChildItem -Recurse -Filter "*.csproj" | ForEach-Object { dotnet test --no-build --verbosity normal --configuration Release --logger trx $_.FullName }
-       shell: powershell
+      shell: powershell
 
     - name: Publish test results
       uses: dorny/test-reporter@v1
