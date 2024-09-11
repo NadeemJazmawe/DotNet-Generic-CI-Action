@@ -1,3 +1,27 @@
+# This GitHub Action workflow is designed to run a CI process for .NET repositories.
+# 
+# Inputs:
+#   dotnet-version:
+#     description: Specifies the version of .NET Core to use.
+#     required: true
+#     default: '6.0.x'
+#
+# Workflow Steps:
+#   1. Checkout code: Uses the actions/checkout@v2 action to checkout the repository code.
+#   2. Setup .NET Core: Uses the actions/setup-dotnet@v1 action to set up the specified .NET Core version.
+#   3. Restore dependencies:
+#      - macOS: Finds all .csproj files and restores dependencies using bash.
+#      - Ubuntu: Finds all .csproj files and restores dependencies using bash.
+#      - Windows: Finds all .csproj files and restores dependencies using PowerShell.
+#   4. Build:
+#      - macOS: Finds all .csproj files and builds the project in Release configuration using bash.
+#      - Ubuntu: Finds all .csproj files and builds the project in Release configuration using bash.
+#      - Windows: Finds all .csproj files and builds the project in Release configuration using PowerShell.
+#   5. Run tests:
+#      - macOS: Finds all .csproj files and runs tests in Release configuration using bash.
+#      - Linux: Finds all .csproj files and runs tests in Release configuration using bash.
+#      - Windows: Finds all .csproj files and runs tests in Release configuration using PowerShell.
+#   6. Publish test results: Uses the dorny/test-reporter@v1 action to publish test results in trx format.
 name: '.NET Core CI'
 description: 'A GitHub Action to run CI process for .NET repositories'
 author: '@Nadeem Jazmawe'
@@ -64,16 +88,16 @@ runs:
         find . -name "*.csproj" -type f -print0 | xargs -0 -n1 dotnet test --no-build --verbosity normal --configuration Release --logger trx
       shell: bash
 
-     - name: Run tests - Linux
-       if: runner.os == 'Linux'
-       run: |
-         find . -name "*.csproj" -type f -print0 | xargs -0 -n1 dotnet test --no-build --verbosity normal --configuration Release --logger trx
-       shell: bash
+    - name: Run tests - Linux
+      if: runner.os == 'Linux'
+      run: |
+        find . -name "*.csproj" -type f -print0 | xargs -0 -n1 dotnet test --no-build --verbosity normal --configuration Release --logger trx
+      shell: bash
 
-     - name: Run tests - Windows
+    - name: Run tests - Windows
        if: runner.os == 'Windows'
        run: |
-         Get-ChildItem -Recurse -Filter "*.csproj" | ForEach-Object { dotnet test --no-build --verbosity normal --configuration Release --logger trx $_.FullName }
+        Get-ChildItem -Recurse -Filter "*.csproj" | ForEach-Object { dotnet test --no-build --verbosity normal --configuration Release --logger trx $_.FullName }
        shell: powershell
 
     - name: Publish test results
