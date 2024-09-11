@@ -104,6 +104,6 @@ runs:
       uses: dorny/test-reporter@v1
       with:
         path-to-report: '**/*.trx'
-        format: 'trx'    - name: Publish test results
+        format: 'trx'    
 
 
