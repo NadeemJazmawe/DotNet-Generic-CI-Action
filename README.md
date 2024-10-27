@@ -51,31 +51,33 @@ This GitHub Action facilitates the setup, build, and testing of .NET Core projec
 To use this GitHub Action in your repository, include the following in your workflow YAML file:
 
 ```yaml
-name: .NET Core Workflow
+name: Dotnet Generic CI Action
 
-on: [push, pull_request]
+on:
+    workflow_dispatch: 
+    
+    workflow_call:
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+    CI:
+        name: CI Process 
+        runs-on: windows-latest     ## Choose the required OS to run the project on 
+        steps:
+            -   name: Restore static site content
+                uses: actions/cache@v3.2.6
+                with:
+                    path: ./**
+                    key: cache-site-${{ github.run_number }}
+                    enableCrossOsArchive:
+                        true       
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Setup .NET Core
-        uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: '6.0.x'
-
-      - name: Restore dependencies
-        run: dotnet restore
-
-      - name: Build
-        run: dotnet build --no-restore
-
-      - name: Run tests
-        run: dotnet test --no-build --verbosity normal
+            -   name: Generic .NET Core CI
+                # You may pin to the exact commit or the version.
+                # uses: NadeemJazmawe/DotNet-Generic-CI-Action@8521455a806596b4fd141b4cfb7687dba7c59e03
+                uses: NadeemJazmawe/DotNet-Generic-CI-Action@V1.0
+                with:
+                  # The version of .NET Core to use
+                  dotnet-version: 8.0.100
 ```
 
 ## Contributing
