@@ -1,4 +1,4 @@
-# GitHub Action: .NET Core Workflow
+# GitHub Action: Dotnet Generic CI Action
 
 
 ## Overview
